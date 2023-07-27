@@ -26,8 +26,9 @@ application.secret_key = 'your_secret_key_here'
 
 
 
-directory = '/home/sanjana/explainable_factual_evaluation/datasets/short_dialogue/model_generated/annotations'
-database_name = 'gpt4_summaries_short_sanjana.db'
+#directory = '/home/sanjana/explainable_factual_evaluation/datasets/short_dialogue/model_generated/annotations'
+directory = "data/"
+database_name = 'gpt4_summaries_short.db'
 db_path = '/%s/%s'%(directory, database_name)
 db_engine = dbEngine=sqlalchemy.create_engine('sqlite:///' + db_path)
 
