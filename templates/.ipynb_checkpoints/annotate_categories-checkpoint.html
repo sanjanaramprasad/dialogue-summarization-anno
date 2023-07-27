@@ -1,0 +1,278 @@
+<!doctype html>
+
+<head>
+    <style>
+
+        .container {
+			position: relative;
+			height: 100px;
+			background-color: #eee;
+		}
+
+		#black-button {
+			position: absolute;
+			left: 10px;
+			background-color: black;
+			color: white;
+			padding: 5px 20px;
+			border: none;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+        #submit-button {
+			position: absolute;
+			right: 100px;
+			background-color: green;
+			color: white;
+			padding: 5px 20px;
+			border: none;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+    #next-button {
+			position: absolute;
+			right: 200px;
+			background-color: pink;
+			color: white;
+			padding: 5px 20px;
+			border: none;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+        #clear-button {
+			position: absolute;
+			left: 100px;
+			background-color: orange;
+			color: white;
+			padding: 5px 20px;
+			border: none;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+    
+        
+		input[type="checkbox"]{
+            -webkit-appearance: initial;
+            appearance: initial;
+            background: gray;
+            width: 13px;
+            height: 13px;
+            border: 2px solid black;;
+            position: relative;
+        }
+        input[type="checkbox"]:checked {
+            background: red;
+        }
+        input[type="checkbox"]:checked:after {
+            /* Heres your symbol replacement */
+            content: "X";
+            color: #fff;
+            /* The following positions my tick in the center, 
+            * but you could just overlay the entire box
+            * with a full after element with a background if you want to */
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%,-50%);
+            -moz-transform: translate(-50%,-50%);
+            -ms-transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%);
+            /*
+            * If you want to fully change the check appearance, use the following:
+            * content: " ";
+            * width: 100%;
+            * height: 100%;
+            * background: blue;
+            * top: 0;
+            * left: 0;
+            */
+        }
+ 
+
+
+	</style>
+
+    <title>Annotation Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(function() {
+        $(window).on('beforeunload', function() {
+          $.ajax({
+            url: '/logout',
+            type: 'POST',
+            async: false
+          });
+        });
+      });
+
+      function setFieldsRequired(required) {
+    document.getElementById("myForm").addEventListener("submit", function(event) {
+      // var inaccuracy_severity_previous = "{{inaccuracy_severity}}";
+      // var error_category_previous = "{{error_category}}";
+
+      var severityInput = document.getElementsByName("severity");
+      var isSeveritySelected = false;
+      // alert(severityInput.length)
+      for (var i = 0; i < severityInput.length; i++) {
+        if (severityInput[i].checked) {
+          isSeveritySelected = true;
+          // alert(severityInput[i])
+          break;
+        }
+      }
+
+      // alert(isSeveritySelected);
+      var errortypeInput = document.getElementsByName("error_type");
+      var isErrortypeSelected = false;
+      for (var i = 0; i < errortypeInput.length; i++) {
+        if (errortypeInput[i].checked) {
+          isErrortypeSelected = true;
+          // alert(severityInput[i])
+          break;
+        }
+      }
+      
+      // alert(inaccuracy_severity_previous );
+      
+      if (required && (!isSeveritySelected || !isErrortypeSelected)) {
+        alert("Please mark the choices in the questions");
+          event.preventDefault(); // Prevent form submission if required fields are not filled
+          
+        }
+
+      // else if (required && (!isSeveritySelected)) {
+      //     event.preventDefault(); // Prevent form submission if required fields are not filled
+      //     alert("Please mark the question about error severity");
+      //   }
+
+      // else if (required && (!isErrortypeSelected)) {
+      //     event.preventDefault(); // Prevent form submission if required fields are not filled
+      //     alert("Please mark the question about error type");
+      //   }
+
+
+      
+      // alert(severityInput.value)
+      
+    });
+  }
+
+    </script>
+  </head>
+
+<title>Annotate</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<section class="content">
+  
+  
+  {% block content %}
+
+
+
+  <br/><br/>
+  <!-- <h1> Article </h1>  -->
+  <div style="width: 100%; overflow: hidden;">
+    <div id="article" style="width:45%; height:440px;float: left;overflow:auto;background-color: lightgrey;border: 15px lightgreyn;padding: 10px;margin: 12px; border-radius: 25px;">
+        <h1> Article </h1>
+        <p style ="color: darkblue; line-height: 1.5;"> {{ article }}</p>
+
+        <br/><br/>
+    </div>
+
+    <!-- border: 15px lightgreyn;padding: 10px;margin: 20px; border-radius: 15px; ">-->
+    <div id="system-summary" style="width:45%; height:440px;float: right; background-color: lightgoldenrodyellow;border: 15px lightgreyn;padding: 10px;margin: 12px; border-radius: 25px;">
+        <h2>System Summary</h2>
+        <p style ="color: darkblue; line-height: 1.5;">{{ summary }}</p>
+    </div>
+</div>
+
+<div id="nonfactual_sentence" style="width:95%; height:120px;overflow:auto;background-color:thistle;border: 15px lightgreyn;padding: 10px;margin: 12px; border-radius: 25px;">
+  <h3 style="color:darkblue"> Non factual sentence identified </h3>
+    <h4 style="color:darkblue"> {{nonfactual_sentence}}</h4>
+</div>
+
+
+ <div id=".container" style="position: relative;top: 20px;">
+  <hr>
+  
+  <form action="/save_annotation" method="post" id = "myForm">
+
+      
+        <!-- {% if inaccuracy_severity %}
+          <h3 style = "color:green"> Previous annotations found for severity of error : </h3>
+          {{inaccuracy_severity}}
+        {% endif %} -->
+        
+        {% if inaccuracy_severity or error_category %}
+        <div id="previous_labels" style="width:70%; height:100px;overflow:auto;background-color:whitesmoke;border: 15px black;padding: 10px;margin: 12px; border-radius: 25px;">
+          {% if inaccuracy_severity %}
+            <h4 style = "color:red"> Previous annotations found for severity of error :  {{inaccuracy_severity}}</h4>
+          {% endif %}
+          {% if error_category %}
+            <h4 style = "color:red"> Previous annotations found for category of error : {{error_category}}</h4> 
+          {% endif %}
+        {% endif %}
+
+        </div>
+
+ 
+        <h3> Above is a sentence from the summary marked as inconsistent. Answer the following questions with respect to the inconsistent sentence</h3>
+        
+        
+        <h4> 1) What is the best category to identify the severity of error</h4>
+
+        <input type="radio" name = "severity" value = "minor" > Minor inconsistencies (relatively minor errors that do not significantly affect the overall understanding or interpretation of the summary 
+        ) </input> <br>
+        <input type="radio" name = "severity" value = "major" > Major inconsistencies (substantial inconsistencies that have a noticeable impact on accuracy or interpretation of summary)  </input> <br>
+        
+        <h4> 2) Mark the box that best identifies the type of error in the sentence </h4>
+        <input type="radio" name = "error_type" value = "intrinsic"> Terms or concepts from the source are misrepresented </input> <br>
+
+        (Note: The following are for cases when the summary includes content that is not found in the source and cannot be inferred) <br>
+        <input type="radio" name = "error_type" value = "extrinsic_factual" > The information in the summary is not found in the source but can be verified via an internet search as accurate  </input> <br>
+        <input type="radio" name = "error_type" value = "extrinsic_factual_outdated" > The information in the summary is not found in the source and can be verified via an internet search as being accurate at a previous time but is outdated  </input> <br>
+        <input type="radio" name = "error_type" value = "extrinsic_nonfactual" > The information in the summary is not found in the source and can not be verified via an internet search </input> <br>
+        <input type="radio" name = "error_type" value = "other" > Other (ensure to leave a short comment) </input> <br><br>
+       
+        Leave a comment if marked other, else optional <br>
+        <input type = "text" name="comments" placeholder="comment box (optional unless marked other above)">
+
+        <input name="username" value="{{username}}" type=hidden>
+        <input name="summ_uuid" value="{{summ_uuid}}" type=hidden>
+        <input name="summ_id" value="{{summ_id}}" type=hidden>
+        <input name="system_id" value="{{system_id}}" type=hidden>
+        <input name="nonfactual_sentence" value="{{nonfactual_sentence}}" type=hidden>
+        <input name="summary" value="{{summary}}" type=hidden>
+        <input name="article" value="{{article}}" type=hidden>
+        <input name="inaccuracy_severity_previous" value="{{inaccuracy_severity}}" type=hidden>
+        <input name="error_category_previous" value="{{error_category}}" type=hidden>
+        
+        <br>
+        <br>
+            
+</div>
+
+<!-- <button id="clear-button" name = "button" value = "clear"  onclick="setFieldsRequired(false)">Clear</button> -->
+<button id="submit-button" name = "button" value = "submit" type = "submit" onclick="setFieldsRequired(true)"> Submit</button>
+<button id="next-button" name = "button" value = "next" onclick="setFieldsRequired(false)"> Next</button>
+<button id="black-button" name = "button" value = "back" onclick="setFieldsRequired(false)">Back</button>
+
+
+
+
+  {% endblock %}
+</form>
+</div>
+
+</section>
